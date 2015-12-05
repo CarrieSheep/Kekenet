@@ -1,49 +1,85 @@
 __author__ = 'carrie'
-
 #coding = utf-8
 import re
 import chardet
-from urllib import urlopen
+from urllib import urlopen,urlretrieve
 
-class CrawlerStoryUrl :
+class PatStory():
 
+    # 获取可可英语网小故事背诵达人1-37页的网页链接
     def getPageUrl(self):
-        Http = []
-        for i in range(1,36):
-            http ='http://en.dict.cn/news/topic/strange/pn%s' % i
-            print http
-            Http.append(http)
-        return Http
+        page_list = []
+        page_list.append('http://www.kekenet.com/menu/13407/')
+        for i in range(1,37):
+            http = 'http://www.kekenet.com/menu/13407/List_%s' % i + '.shtml'
+        # print http
+            page_list.append(http)
+        return page_list
 
- # 获取海词英语网奇闻轶事1-46页的网址所对应的源代码
-    def getText(self):
-        total_url = self.getHttp()
-        Text = []
-        for total_url in total_url:
-            # print total_url
-            text = urlopen(total_url).read()
-            c = chardet.detect(text)
-            code = c['encoding']
-            # print code   # 查询网页的编码方式，code 为utf-8
-            text = str(text).decode(code, 'ignore').encode('utf-8')
-            # print text
-            Text.append(text)
-        return Text
+    # 获取每个故事的网页链接
+    def getStoryUrl(self):
+        story_list = []
+        page_list = self.getPageUrl()
+        for page in page_list:
+            text = urlopen(page).read()
+            b = re.compile(r'http://www.kekenet.com/menu/2.*?shtml')
+            list = re.findall(b, text)
+            # print list
+            for story in list:
+                story_list.append(story)
+        return story_list
 
-    # 获取1-46页每篇奇闻轶事的网址
-    def getTotalUrl(self):
-        text = self.getText()
-        Url = []
-        for text in text:
-            pattern1_url = re.compile('<h2.*?class="ainfo">')
-            url_list = re.findall(pattern1_url, text)
-            pattern2_url = re.compile('/news/view/\d*')
-            url_list = str(url_list)
-            url_list = re.findall(pattern2_url, url_list)
-            for url_list in url_list:
-                url_list = 'http://en.dict.cn'+url_list
-                # print url_list
-                Url.append(url_list)
-        # print Url
-        return Url
+    # 获取每个故事页面的源代码
+    def getStorySC(self):
+        sc_list = []
+        story_list = self.getStoryUrl()
+        for story in story_list:
+            text = urlopen(story).read()
+            text = str(text).replace('\r\n', '')
+            sc_list.append(text)
+        return sc_list
 
+    #获取每个故事的内容和标题
+    def getContent(self):
+        content_list = []
+        title_list = []
+        sc_list = self.getStorySC()
+        for content in sc_list:
+            a = re.compile(r'<div class="qh_.*?</div>')
+            article = re.findall(a, content)
+            essay = ''
+            title = ''
+            count = 0
+            for item in article:
+                item = re.sub(r'<.*?>', '', item).replace('&#39;', "'")
+                # print item
+                if count < 2:
+                    title = title + item + '  '
+                    count += 1
+                essay = essay + '\r\n' + item
+            content_list.append(essay)
+        return content_list
+
+    #获取每个故事的MP3
+    def getMP3(self):
+        mp3_list = []
+        mp3Url_list = []
+        story_list = self.getStoryUrl()
+        for story in story_list:
+            mp3_dowmload = story.replace('menu','mp3')
+            # print mp3_dowmload
+            text = urlopen(mp3_dowmload).read()
+            a = re.search(r'http://xia.*?mp3', text)
+            # print a
+            if a == None:
+                mp3Url_list.append('')
+            else:
+                mp3Url_list.append(a.group())
+        i = 0
+        for mp3 in mp3Url_list:
+            if mp3 != []:
+                a = r'/home/carrie/downloads/story/mp3/' + i + r'.mp3'
+                urlretrieve(mp3,a)
+            i += 1
+
+    #获取每个故事的图片
