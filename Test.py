@@ -8,7 +8,7 @@ from urllib import urlopen,urlretrieve
 #获取"小故事背诵"网页链接
 page_list = []
 page_list.append('http://www.kekenet.com/menu/13407/')
-for i in range(33,77):
+for i in range(33,34):
     http = 'http://www.kekenet.com/menu/13407/List_%s' % i + '.shtml'
     # print http
     page_list.append(http)
@@ -32,10 +32,6 @@ for page in page_list:
     # print list
     for story in list:
         story_list.append(story)
-        text = urlopen(story).read()
-        text = str(text).replace('\r\n', '')
-        pic_download = re.findall(r'http://pic.kekenet.*?jpg',text)
-        print pic_download
 # print len(story_list)
 
 
@@ -52,18 +48,6 @@ for page in page_list:
 # 以上三行解码错误且
 # text = str(text).replace('\r\n', '')
 # print text
-#
-# ['http://pic.kekenet.com/2014/0728/77941406537351.jpeg"
-# 'http://pic.kekenet.com/2014/0728/77941406537351.jpeg"
-# ['http://pic.kekenet.com//2014/0702/59341404290232.jpeg"
-# ['http://pic.kekenet.com//2014/0617/51821402998609.png"
-# http://pic.kekenet.com//2014/0627/99731403860110.jpeg"
-# http://pic.kekenet.com//2014/0520/45641400576355.png"
-# 'http://pic.kekenet.com/2013/1022/64531382433745.jpg'
-# ['http://pic.kekenet.com/2013/0830/83321377852882.JPG" /
-# ['http://pic.kekenet.com/2013/0726/79521374828259.JPG" /
-# 'http://pic.kekenet.com/2013/0801/77341375344747.jpeg"
-# http://pic.kekenet.com/2013/0528/8841369705776.png"
 
 
 # #爬取文章  内容和标题
@@ -91,21 +75,37 @@ for page in page_list:
 #     print a
 
 # 爬取文章  图片
-
+picture_list = []
+j = 0
 for i in story_list:
-    pic_download = re.search(r'http://pic.kekenet.*?jpg', text).group()
-    if len(pic_download) > 100:
-        a = re.search(r'http://pic.kekenet.*?jpeg', pic_download)
-        if a == None:
-            b = re.search(r'http://pic.kekenet.*?JPG', pic_download)
-            if b == None:
-                pic_download =re.search(r'http://pic.kekenet.*?png',pic_download).group()
+    text = urlopen(i).read()
+    text = str(text).replace('\r\n','')
+# print text
+    pic_download = re.search(r'http://pic.kekenet.*?jpg', text)
+    if pic_download != None:
+        pic_download = pic_download.group()
+        if len(pic_download) > 100:
+            a = re.findall(r'http://pic.kekenet.*?jpeg', pic_download)
+            if a == []:
+                b = re.findall(r'http://pic.kekenet.*?JPG', pic_download)
+                if b == []:
+                    pic_download =re.findall(r'http://pic.kekenet.*?png',pic_download)[0]
+                else:
+                    pic_download = b[0]
             else:
-                pic_download = b.group()
-        else:
-            pic_download = a.group()
-
+                pic_download = a[0]
+    else:
+        pic_download = ''
     print pic_download
+    if pic_download != '':
+        if re.findall('png',pic_download) == []:
+            a = r'/home/carrie/downloads/story/picture/' + str(j) + r'.jpg'
+            urlretrieve(pic_download,a)
+        else:
+            a = r'/home/carrie/downloads/story/picture/' + str(j) + r'.png'
+            urlretrieve(pic_download,a)
+    j = j + 1
+    picture_list.append(pic_download)
 
 # pic_download = re.search(r'http://pic.kekenet.*?jpg','http://pic.kekenet///.*?jpg').group()
 # print type(pic_download)
