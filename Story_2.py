@@ -10,7 +10,7 @@ class PatStoryUrl():
     #获取网页链接
     def getPageUrl(self):
         page_list = []
-        for i in range(1,2):
+        for i in range(1,1):
             http = 'http://www.kekenet.com/menu/13407/List_%s' % i + '.shtml'
             page_list.append(http)
         page_list.append('http://www.kekenet.com/menu/13407/')
@@ -105,13 +105,6 @@ class PatStory():
         print lrc
         a = r'/home/carrie/downloads/story/lrc/' + str(i) + r'.lrc'
         urlretrieve(lrc, a)
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     a = PatStoryUrl()

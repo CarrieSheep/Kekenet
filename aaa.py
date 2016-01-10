@@ -1,7 +1,7 @@
 #coding=utf-8
 __author__ = 'carrie'
 import re
-from urllib import urlretrieve
+from urllib import urlretrieve,urlopen
 # from urllib import urlopen,urlretrieve
 # a = r'agdg' + str(1)
 # print a
@@ -38,8 +38,8 @@ from urllib import urlretrieve
 
 #检测lrc文件
 # a = 'http://www.kekenet.com/Sound/Article/fangtanlu/20111117.mp3.lrc'
-g = 'http://www.kekenet.com/Sound/2015/11/15_3459987kpP.lrc'
-urlretrieve(g,'/home/carrie/downloads/story/picture/g.lrc')
+# g = 'http://www.kekenet.com/Sound/2015/11/15_3459987kpP.lrc'
+# urlretrieve(g,'/home/carrie/downloads/story/picture/g.lrc')
 
 
 # 检测for循环中列表删除元素后长度是否变化
@@ -60,9 +60,35 @@ urlretrieve(g,'/home/carrie/downloads/story/picture/g.lrc')
 # dict = {'a':['a','b'],'b':[1, 2, 3]}
 # print dict['a']
 
+# text = urlopen('http://www.kekenet.com/video/movie/').read()
+# text = str(text).replace('\r\n','')
+# print len(re.findall(r'<li><a href="/video/.*?</li>',text))
+# print len(re.findall(r'<li><a href="/menu/.*?</li>',text))
 
+# text = urlopen('http://www.kekenet.com/menu/13407/').read()
+# text = str(text).replace('\r\n','')
+# a = re.findall(r'<span id="total">.*?</span>',text)
+# print a[0]
+# print type(re.sub(r'<.*?>','',a[0]))
 
+# text = urlopen('http://www.kekenet.com/video/201203/174590.shtml').read()
+# text = str(text).replace('\r\n','')
+# a = re.findall(r'<time.*?time>',text)
+# a = re.findall(r':(.*?)</time',a[0])
+# print a
 
-
-
-
+text = urlopen('http://www.kekenet.com/video/201203/174590.shtml').read()
+text = str(text)
+text = re.sub(r'\n','',text)
+print text
+a = re.compile('<div class="qh_.*?</div>')
+article = re.findall(a, text)
+# print article
+content = ''
+if article != []:
+    for item in article:
+        print item
+#         item = re.sub(r'<.*?>', '', item).replace('&#39;', "'").replace('&quot;', '"')
+#         content = content + item + '\r\n'
+# else:
+#     content = ''

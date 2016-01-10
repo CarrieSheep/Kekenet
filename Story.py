@@ -1,18 +1,17 @@
-#coding = utf-8
+#coding=utf-8
 __author__ = 'carrie'
 import re
-import chardet
 from urllib import urlopen,urlretrieve
 
 class PatStory():
-
+#爬取网页链接
     def getPageUrl(self):
         page_list = []
-        page_list.append('http://www.kekenet.com/menu/13407/')
-        for i in range(1,37):
+        for i in range(1,38):
             http = 'http://www.kekenet.com/menu/13407/List_%s' % i + '.shtml'
             # print http
             page_list.append(http)
+        page_list.append('http://www.kekenet.com/menu/13407/')
         print 1, page_list
         return page_list
 
@@ -60,8 +59,9 @@ class PatStory():
                 if count < 2:
                     title = title + item + '  '
                     count += 1
-                essay = essay + '\r\n' + item
+                essay = essay + item + '\r\n'
             content_list.append(essay)
+            # print essay
         contentAndTitle_dict = {'content':content_list,'title':title_list}
         print 6, contentAndTitle_dict
         return contentAndTitle_dict
@@ -72,15 +72,9 @@ class PatStory():
         mp3Url_list = []
         story_list = self.getStoryUrl()
         for story in story_list:
-            mp3_dowmload = story.replace('menu','mp3')
+            mp3_dowmload = story.replace('menu', 'mp3')
             # print mp3_dowmload
-            text = urlopen(mp3_dowmload).read()
-            a = re.search(r'http://xia.*?mp3', text)
-            # print a
-            if a == None:
-                mp3Url_list.append('')
-            else:
-                mp3Url_list.append(a.group())
+
         print 7, mp3Url_list,len(mp3Url_list)
         return mp3Url_list
 
@@ -135,8 +129,9 @@ class PatStory():
 
 if __name__ == '__main__':
     a = PatStory()
+    # a.getPageUrl()
     # a.getStoryUrl()
-    a.getContentAndTitle()
+    # a.getContentAndTitle()
     # a.getMP3Url()
-    a.getMP3()
-    a.getPicture()
+    # a.getMP3()
+    # a.getPicture()
