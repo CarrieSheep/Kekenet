@@ -16,27 +16,36 @@ class GetUrlMethod():
         return page_list
 
     #获取每个故事的链接
-    def getStoryAndMP3Url(self,page_list,type):
+    def getStoryAndMP3UrlAndTitle(self,page_list,type):
         story_list = []
         mp3_list = []
+        title_list = []
         for page in page_list:
             text = urlopen(page).read()
             text = str(text).replace('\r\n','')
             #获取故事链接
-            matchstr = 'http://www.kekenet.com/' + type + '/2.*?shtml'
-            # print matchstr
-            b = re.compile(matchstr)
-            list = re.findall(b, text)
-            # print 2, list
-            for story in list:
+            pattern_url = 'http://www.kekenet.com/' + type + '/2.*?shtml'
+            pattern_title = 'http://www.kekenet.com/' + type + '/2.*?target'
+            #匹配url
+            b = re.compile(pattern_url)
+            ulist = re.findall(b, text)
+            #匹配标题
+            tlist = []
+            b = re.findall(pattern_title, text)
+            for title in b:
+                title = re.findall(r'《.*?target',title)
+                title = re.sub(r'" target', '', title[0])
+                tlist.append(title)
+            for index in range(0,len(ulist)):
                 #获取MP3下载地址链接,查看MP3是否存在,若不存在,则该是链接不存储
-                mp3_url = story.replace(type, 'mp3')
+                mp3_url = ulist[index].replace(type, 'mp3')
                 text = urlopen(mp3_url).read()
                 a = re.search(r'http://xia.*?mp3', text)
                 if a != None:
-                    story_list.append(story)
+                    story_list.append(ulist[index])
                     mp3_list.append(a.group())
-        dict = {'story':story_list,'mp3':mp3_list}
+                    title_list.append(tlist[index])
+        dict = {'story': story_list, 'mp3': mp3_list, 'title': title_list}
         # print 3, story_list
         # print 3, mp3_list
         return dict
@@ -66,11 +75,11 @@ class PatStoryMethod():
         # print 5, content
         return content
 
-    def getTitle(self,content):
-        title = re.split('\r\n', content)
-        title = title[0]
+    # def getTitle(self,content):
+    #     title = re.split('\r\n', content)
+    #     title = title[0]
         # print 6, title
-        return title
+        # return title
 
     #爬取每个故事的音频
     def getMP3(self, mp3, index, storeAdd):
