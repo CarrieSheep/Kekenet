@@ -22,20 +22,17 @@ class GetUrlMethod():
         title_list = []
         for page in page_list:
             text = urlopen(page).read()
-            text = str(text).replace('\r\n','')
-            #获取故事链接
-            pattern_url = 'http://www.kekenet.com/' + type + '/2.*?shtml'
-            pattern_title = 'http://www.kekenet.com/' + type + '/2.*?target'
-            #匹配url
-            b = re.compile(pattern_url)
-            ulist = re.findall(b, text)
-            #匹配标题
+            text = str(text).replace('\r\n', '')
+            pattern= re.compile('http://www.kekenet.com/' + type + '/2.*?target')
+            pattern_url = re.compile('http://www.kekenet.com/' + type + '/2.*?shtml')
+            pattern_title = re.compile(r'《.*?target')
+            ulist = []
             tlist = []
-            b = re.findall(pattern_title, text)
-            for title in b:
-                title = re.findall(r'《.*?target',title)
-                title = re.sub(r'" target', '', title[0])
-                tlist.append(title)
+            b = re.findall(pattern, text)
+            for item in b:
+                ulist.append(re.findall(pattern_url, item)[0])
+                title = re.findall(pattern_title,item)
+                tlist.append(re.sub(r'" target', '', title[0]))
             for index in range(0,len(ulist)):
                 #获取MP3下载地址链接,查看MP3是否存在,若不存在,则该是链接不存储
                 mp3_url = ulist[index].replace(type, 'mp3')
