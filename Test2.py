@@ -2,6 +2,7 @@
 __author__ = 'carrie'
 import re
 from urllib import urlretrieve,urlopen
+import eyed3
 # from urllib import urlopen,urlretrieve
 # a = r'agdg' + str(1)
 # print a
@@ -116,5 +117,6 @@ from urllib import urlretrieve,urlopen
 # for i in a:
 #     print i
 
-a = ''
-print len(a)
+# mp3 = '/home/carrie/downloads/story/mp3/1.mp3'
+# audio = eyed3.load(mp3)
+# print(audio.info.time_secs)
